@@ -1,25 +1,28 @@
 import pytest
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 from ui.locators import basic_locators
 from base import BaseCase
+import utils
+
 
 class TestOne(BaseCase):
 	@pytest.mark.UI
 	def test_login(self, config):
 		self.log_in(config)
 
-		profile_button = self.find(basic_locators.PROFILE_BUTTON_LOCATOR) # Когда нашлась кнопка, мы выждали нужное время для загрузки страницы
-		assert "Профиль" in self.driver.page_source
+		assert self.find(basic_locators.PROFILE_BUTTON_LOCATOR) # Когда нашлась кнопка, мы выждали нужное время для загрузки страницы
+
 
 	@pytest.mark.UI
 	def test_logout(self, config):
 		self.log_in(config)
 		self.log_out()
 
-		popup_login_button = self.find(basic_locators.POPUP_LOGIN_BUTTON_LOCATOR) # Когда нашлась кнопка, мы выждали нужное время для загрузки страницы
-
-		assert "Войти" in self.driver.page_source
+		assert self.find(basic_locators.POPUP_LOGIN_BUTTON_LOCATOR)
 	
+
 	@pytest.mark.UI
 	def test_change_contact_info(self, config):
 		fio = config['fio']
@@ -39,6 +42,7 @@ class TestOne(BaseCase):
 		assert fio_input.get_attribute('value') == fio
 		assert phone_input.get_attribute('value') == phone
 
+
 	@pytest.mark.parametrize('url, locator', [
 		("https://target.my.com/billing", basic_locators.BILLING_BUTTON_LOCATOR),
 		("https://target.my.com/statistics/summary", basic_locators.STATISTICS_BUTTON_LOCATOR),
@@ -49,7 +53,7 @@ class TestOne(BaseCase):
 
 		self.click(locator)
 
-		assert(self.driver.current_url == url)		
-
-
-
+		# Тут ждем, пока пройдет переадресация на итоговую страничку
+		assert WebDriverWait(self.driver, utils.MAX_TIME_WAIT).until( 
+			EC.url_matches(url)
+		)

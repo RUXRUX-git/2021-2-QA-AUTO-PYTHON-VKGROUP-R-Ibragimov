@@ -5,16 +5,15 @@ from selenium.webdriver.chrome.options import Options
 from random import randint
 from uuid import uuid4
 
-CHROME_DRIVER_PATH = "./sources/chromedriver"
-LOGIN    = "ruxrux2002@yandex.ru"
-PASSWORD = "44f3ee14-7ba6-4177-bec8-48136ab010f0"
-URL = "https://target.my.com/"
+import utils
+
 
 def pytest_addoption(parser):
-	parser.addoption('--login', default=LOGIN)
-	parser.addoption('--password', default=PASSWORD)
-	parser.addoption('--url', default=URL)
-	parser.addoption('--chrome_driver_path', default=CHROME_DRIVER_PATH)
+	parser.addoption('--login', default=utils.LOGIN)
+	parser.addoption('--password', default=utils.PASSWORD)
+	parser.addoption('--url', default=utils.URL)
+	parser.addoption('--chrome_driver_path', default=utils.CHROME_DRIVER_PATH)
+
 
 @pytest.fixture()
 def config(request):
@@ -28,12 +27,16 @@ def config(request):
 
 	return {'login': login, 'password': password,'url': url, 'chrome_driver_path': chrome_driver_path,'fio': fio, 'phone': phone}
 
+
 @pytest.fixture(scope='function')
 def driver(config):
 	url = config['url']
 
+	# Убираем ненужные на данный момент сообщения
 	options = Options()
-	options.page_load_strategy = 'eager'
+	options.add_argument('--ignore-certificate-errors')
+	options.add_argument('--ignore-ssl-errors')
+	options.add_experimental_option('excludeSwitches', ['enable-logging'])
 
 	browser = webdriver.Chrome(executable_path=config['chrome_driver_path'], options=options)
 
