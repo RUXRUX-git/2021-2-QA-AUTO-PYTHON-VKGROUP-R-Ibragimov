@@ -1,8 +1,20 @@
-CHROME_DRIVER_PATH = "./sources/chromedriver"
-LOGIN    = "ruxrux2002@yandex.ru"
-PASSWORD = "44f3ee14-7ba6-4177-bec8-48136ab010f0"
-URL = "https://target.my.com/"
+from random import randint
+from uuid import uuid4
 
-MAX_CLICKS_COUNT = 4
-MICROSLEEP_TIME = 0.5
-MAX_TIME_WAIT = 30
+def get_login(request):
+	return request.config.getoption('--login')
+
+def get_password(request):
+	return request.config.getoption('--password')
+
+def get_url(request):
+	return request.config.getoption('--url')
+
+def get_chrome_driver_path(request):
+	return request.config.getoption('--chrome_driver_path')
+
+def get_fio():
+	return str(uuid4())
+
+def get_phone():
+	return str(randint(10 ** 11, 10 ** 12 - 1))

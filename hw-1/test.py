@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from ui.locators import basic_locators
 from base import BaseCase
-import utils
+import constants
 
 
 class TestOne(BaseCase):
@@ -25,13 +25,10 @@ class TestOne(BaseCase):
 
 	@pytest.mark.UI
 	def test_change_contact_info(self, config):
-		fio = config['fio']
-		phone = config['phone']
-
 		self.log_in(config)
 
 		self.click(basic_locators.PROFILE_BUTTON_LOCATOR)
-		self.change_contact_info(fio, phone)
+		self.change_contact_info(config)
 		self.click(basic_locators.SAVE_CONTACT_INFO_BUTTON_LOCATOR)
 
 		self.driver.refresh()
@@ -39,8 +36,8 @@ class TestOne(BaseCase):
 		fio_input = self.find(basic_locators.FIO_INPUT_LOCATOR)
 		phone_input = self.find(basic_locators.PHONE_INPUT_LOCATOR)
 
-		assert fio_input.get_attribute('value') == fio
-		assert phone_input.get_attribute('value') == phone
+		assert fio_input.get_attribute('value') == config['fio']
+		assert phone_input.get_attribute('value') == config['phone']
 
 
 	@pytest.mark.parametrize('url, locator', [
@@ -54,6 +51,6 @@ class TestOne(BaseCase):
 		self.click(locator)
 
 		# Тут ждем, пока пройдет переадресация на итоговую страничку
-		assert WebDriverWait(self.driver, utils.MAX_TIME_WAIT).until( 
+		assert WebDriverWait(self.driver, constants.MAX_TIME_WAIT).until( 
 			EC.url_matches(url)
 		)

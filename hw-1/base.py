@@ -1,14 +1,30 @@
 import pytest
-import time
 
-from selenium.common.exceptions import StaleElementReferenceException
-from selenium.common.exceptions import ElementClickInterceptedException
-from selenium.common.exceptions import ElementNotInteractableException 
+from selenium.common.exceptions import (StaleElementReferenceException, 
+                                       ElementClickInterceptedException, 
+                                       ElementNotInteractableException) 
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from ui.locators import basic_locators
-import utils
+import constants
+
+
+# Ничего лучше не придумал)) просто проверить кликабельность не получится,
+# потому что кнопка выхода выезжает вместе с попапом
+class click_or_false(object):
+    def __init__(self, locator):
+        self.locator = locator
+
+    def __call__(self, driver):
+        try:
+            element = driver.find_element(*self.locator)
+            element.click()
+            return element
+        except (StaleElementReferenceException, 
+            ElementClickInterceptedException, ElementNotInteractableException):
+            return False
+
 
 class BaseCase:
     driver = None
@@ -19,19 +35,19 @@ class BaseCase:
 
 
     def find(self, locator):
-        return WebDriverWait(self.driver, utils.MAX_TIME_WAIT).until(
+        return WebDriverWait(self.driver, constants.MAX_TIME_WAIT).until(
             EC.presence_of_element_located(locator)
         )
 
 
     def click(self, locator):
-        for i in range(utils.MAX_CLICKS_COUNT):
+        for i in range(constants.MAX_CLICKS_COUNT):
             try:
                 elem = self.find(locator)
                 elem.click()
                 return
             except StaleElementReferenceException:
-                if i == utils.MAX_CLICKS_COUNT - 1:
+                if i == constants.MAX_CLICKS_COUNT - 1:
                     raise 
 
             
@@ -58,18 +74,15 @@ class BaseCase:
 
         self.click(popup_locator)
 
-        for i in range(utils.MAX_CLICKS_COUNT):
-            try:
-                self.click(button_locator)
-                break
-            except (ElementClickInterceptedException, ElementNotInteractableException):
-                # Ждем, пока кнопка выхода кликнется
-                time.sleep(utils.MICROSLEEP_TIME)
-                if i == utils.MAX_CLICKS_COUNT - 1:
-                    raise
+        WebDriverWait(self.driver, constants.MAX_TIME_WAIT).until(
+            click_or_false(button_locator)
+            )
 
 
-    def change_contact_info(self, fio, phone):
+    def change_contact_info(self, config):
+        fio = config['fio']
+        phone = config['phone']
+
         self.click(basic_locators.PROFILE_BUTTON_LOCATOR)
 
         fio_input = self.find(basic_locators.FIO_INPUT_LOCATOR)

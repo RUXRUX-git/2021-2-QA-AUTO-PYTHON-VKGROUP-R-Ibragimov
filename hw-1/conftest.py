@@ -2,30 +2,26 @@ import pytest
 
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from random import randint
-from uuid import uuid4
 
+import constants
 import utils
 
 
 def pytest_addoption(parser):
-	parser.addoption('--login', default=utils.LOGIN)
-	parser.addoption('--password', default=utils.PASSWORD)
-	parser.addoption('--url', default=utils.URL)
-	parser.addoption('--chrome_driver_path', default=utils.CHROME_DRIVER_PATH)
+	parser.addoption('--login', default=constants.LOGIN)
+	parser.addoption('--password', default=constants.PASSWORD)
+	parser.addoption('--url', default=constants.URL)
+	parser.addoption('--chrome_driver_path', default=constants.CHROME_DRIVER_PATH)
 
 
 @pytest.fixture()
 def config(request):
-	login = request.config.getoption('--login')
-	password = request.config.getoption('--password')
-	url = request.config.getoption('--url')
-	chrome_driver_path = request.config.getoption('--chrome_driver_path')
-
-	fio = str(uuid4())
-	phone = str(randint(10 ** 11, 10 ** 12 - 1))
-
-	return {'login': login, 'password': password,'url': url, 'chrome_driver_path': chrome_driver_path,'fio': fio, 'phone': phone}
+	return {'login': utils.get_login(request), 
+			'password': utils.get_password(request),
+			'url': utils.get_url(request), 
+			'chrome_driver_path': utils.get_chrome_driver_path(request),
+			'fio': utils.get_fio(), 
+			'phone': utils.get_phone()}
 
 
 @pytest.fixture(scope='function')
