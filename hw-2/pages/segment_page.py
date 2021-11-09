@@ -1,8 +1,13 @@
 import allure
 from uuid import uuid4
+from textblob import TextBlob
 
 from pages.authorized_page import AuthorizedPage
 from ui.locators import SegmentPageLocators
+
+
+class UnsupportedLanguageException(Exception):
+    pass
 
 
 class SegmentPage(AuthorizedPage):
@@ -29,7 +34,18 @@ class SegmentPage(AuthorizedPage):
     @allure.step('Creating segment')
     def create_segment(self):
         self.to_creation()
-        self.click(SegmentPageLocators.APPS_AND_GAMES_SEGMENT_LOCATOR)
+
+        apps_and_games_text = ''
+        title = self.driver.title
+        lang = TextBlob(title).detect_language()
+        if lang == 'ru':
+            apps_and_games_text = 'Приложения и игры в соцсетях'
+        elif lang == 'en':
+            apps_and_games_text = 'Apps and games in social networks'
+        else:
+            raise UnsupportedLanguageException(f'Got unsupported language "{lang}" for title "{title}"')
+        self.click(SegmentPageLocators.APPS_AND_GAMES_SEGMENT_LOCATOR(apps_and_games_text))
+
         self.click(SegmentPageLocators.ADD_SEGMENT_CHECKBOX_LOCATOR)
         self.click(SegmentPageLocators.ADD_SEGMENT_POPUP_SUBMIT_LOCATOR)
         segment_name = self.create_random_segment_name()
@@ -41,6 +57,5 @@ class SegmentPage(AuthorizedPage):
     def delete_segment(self, segment_name):
         self.to_list()
         row_id = self.get_segment_row_id(segment_name)
-        print(row_id)
         self.click(SegmentPageLocators.DELETE_SEGMENT_BUTTON_LOCATOR(row_id))
         self.click(SegmentPageLocators.REMOVE_SEGMENT_SUBMIT_LOCATOR)

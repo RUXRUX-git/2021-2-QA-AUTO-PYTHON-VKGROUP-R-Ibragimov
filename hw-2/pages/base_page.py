@@ -1,9 +1,12 @@
 import logging
 import os
 import allure
+import numpy
 
+from PIL import Image
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException
 
 from constants import *
 
@@ -17,7 +20,7 @@ class BasePage:
 
     def wait(self, timeout=None):
         if timeout is None:
-            timeout = 5
+            timeout = BASE_TIMEOUT
         return WebDriverWait(self.driver, timeout=timeout)
 
     @allure.step('Finding element with locator {locator}')
@@ -50,9 +53,6 @@ class BasePage:
 
     @allure.step('Creating image with size {width}x{height}')
     def create_random_image(self, tmpdir, width, height):
-        import numpy
-        from PIL import Image
-
         imarray = numpy.random.rand(height, width, 3) * 255  # First parameter should be height
         im = Image.fromarray(imarray.astype('uint8')).convert('RGBA')
         image_path = os.path.join(os.path.abspath(tmpdir.strpath), 'image.png')

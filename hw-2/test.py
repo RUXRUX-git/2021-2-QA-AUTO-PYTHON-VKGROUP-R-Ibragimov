@@ -34,7 +34,7 @@ class TestCampaignCreation(BaseCase):
         """Create campaign and check it in campaigns list"""
 
         name = campaign_page.create_campaign(tmpdir)
-        assert campaign_page.find(CampaignPageLocators.CAMPAIGN_NAME_CELL_LOCATOR(name)).text == name
+        campaign_page.find(CampaignPageLocators.CAMPAIGN_NAME_CELL_LOCATOR(name)).text
 
 
 @allure.feature('UI tests')

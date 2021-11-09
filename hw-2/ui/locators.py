@@ -31,10 +31,7 @@ class CampaignPageLocators:
 
 
 class SegmentPageLocators:
-    # Ужасный локатор, но лучше не знаю, как - через nth-child?
-    APPS_AND_GAMES_SEGMENT_LOCATOR = (By.XPATH, '//div[contains(@class, "adding-segments-item") and '
-                                                '(text()="Apps and games in social networks" or '
-                                                'text()="Приложения и игры в соцсетях")]')
+    HTML_ROOT_LOCATOR = (By.TAG_NAME, "html")
     ADD_SEGMENT_CHECKBOX_LOCATOR = (By.CLASS_NAME, 'adding-segments-source__checkbox')
     ADD_SEGMENT_POPUP_SUBMIT_LOCATOR = (By.CSS_SELECTOR, '.adding-segments-modal__btn-wrap .button_submit')
     SEGMENT_NAME_INPUT_LOCATOR = (By.CSS_SELECTOR, '.input_create-segment-form input')
@@ -42,6 +39,9 @@ class SegmentPageLocators:
     ALL_SEGMENTS_NAME_LOCATOR = (By.XPATH, '//div[contains(@class, "main-module-Table")]'
                                            '//a[contains(@href, "/segments/segments_list")]')
     REMOVE_SEGMENT_SUBMIT_LOCATOR = (By.CLASS_NAME, 'button_confirm-remove')
+
+    def APPS_AND_GAMES_SEGMENT_LOCATOR(text):
+        return (By.XPATH, f'//div[contains(@class, "adding-segments-item") and text()="{text}"]')
 
     def SEGMENT_NAME_CELL_LOCATOR(name):
         return (By.XPATH, f'//a[contains(@href, "/segments/segments_list") and text()="{name}"]'
