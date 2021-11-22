@@ -138,3 +138,6 @@ dmypy.json
 # hw-5 files
 res.*
 access.log
+
+# PyCharm
+.idea
