@@ -9,8 +9,7 @@ class TestApi(TestBase):
     def test_create_segment(self, api_client, random_name):
         id = api_client.post_create_segment(random_name)
         resp = api_client.get_segment(id)
-        assert "error" not in resp
-        assert "name" in resp
+        assert resp["name"] == random_name
         api_client.delete_segment(id)
 
     @pytest.mark.API
@@ -23,6 +22,5 @@ class TestApi(TestBase):
     def test_create_campaign(self, api_client, tmpdir, random_name, link=URLS.ADS_TARGET):
         id = api_client.post_create_campaign(random_name, link, tmpdir)
         resp = api_client.get_campaign(id)
-        assert "error" not in resp
-        assert "name" in resp
+        assert resp["name"] == random_name
         api_client.delete_campaign(id)
