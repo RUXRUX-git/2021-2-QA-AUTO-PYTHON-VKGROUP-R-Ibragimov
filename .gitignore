@@ -141,3 +141,7 @@ access.log
 
 # PyCharm
 .idea
+
+# hw-7 logs
+logs/
+
