@@ -23,9 +23,7 @@ class TypeToCount(Base):
         return f"<TypeToCount(id='{self.id}', type='{self.type}', count='{self.count}')>"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    # Вот мне кажется, что тип запроса не может быть больше 100 символов,
-    # но из-за одного запроса со странным типом все падало, поэтому поднял до 400
-    type = Column(String(400), nullable=False)
+    type = Column(String(100), nullable=False)
     count = Column(Integer, nullable=False)
 
 

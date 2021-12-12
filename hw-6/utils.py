@@ -26,7 +26,8 @@ def type_to_count(file_name):
         _type_to_count = Counter()
         for line in f:
             parsed = parse_log_line(line)
-            _type_to_count[parsed["type"]] += 1
+            if len(parsed["type"]) <= 100:
+                _type_to_count[parsed["type"]] += 1
 
         return [{"value": elem[0], "count": elem[1]} for elem in _type_to_count.most_common()]
 

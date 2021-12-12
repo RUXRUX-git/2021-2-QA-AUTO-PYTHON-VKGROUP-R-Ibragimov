@@ -2,7 +2,7 @@ import sqlalchemy
 from sqlalchemy import inspect
 from sqlalchemy.orm import sessionmaker
 
-from models import Base
+from mysql.models import Base
 
 
 class MysqlClient:

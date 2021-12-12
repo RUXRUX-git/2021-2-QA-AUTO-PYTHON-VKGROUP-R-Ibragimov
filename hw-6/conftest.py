@@ -2,6 +2,19 @@ import pytest
 
 from mysql.client import MysqlClient
 
+from constants import LOG_FILE_PATH
+
+
+def pytest_addoption(parser):
+    parser.addoption('--log_file_path', default=LOG_FILE_PATH)
+
+
+@pytest.fixture()
+def config(request):
+    return {
+        'log_file_path': request.config.getoption('--log_file_path')
+    }
+
 
 def pytest_configure(config):
     mysql_client = MysqlClient(user="root", password="pass", db_name="TEST_SQL", host="127.0.0.1", port=3306)

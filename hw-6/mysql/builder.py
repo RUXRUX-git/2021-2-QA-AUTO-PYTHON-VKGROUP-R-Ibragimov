@@ -1,4 +1,4 @@
-from models import CountRequests, \
+from mysql.models import CountRequests, \
     TypeToCount, \
     MostPopularUrls, \
     TopSized4xxRequests, \
